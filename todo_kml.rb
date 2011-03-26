@@ -10,7 +10,7 @@ doc = open(todo_url).read
 
 json_doc = JSON.parse(doc)
 
-todos = json_doc['response']['todos']['items']
+todos = json_doc['response']['todos']['items'].sort { |x, y| x['tip']['venue']['name'] <=> y['tip']['venue']['name'] }
 
 f = File.open(output_file, 'w')
 xml = Builder::XmlMarkup.new(:target => f, :indent => 2)
@@ -44,4 +44,4 @@ f.close
 fixed_kml = File.read(output_file).gsub('document', 'Document').gsub('point', 'Point').gsub('placemark', 'Placemark')
 File.open(output_file, 'w') { |f| f << fixed_kml }
 
-`scp #{output_file} #{destination_dir}`
+`scp #{output_file} #{destination_dir}` if destination_dir
